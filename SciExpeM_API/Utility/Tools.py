@@ -51,6 +51,9 @@ def serialize(obj, exclude):
     tmp = {}
     for key, value in diz.items():
         if type(value) == list:
+            # keep empty lists as [] instead of dropping the key (the server
+            # requires mandatory keys like initial_species even when empty)
+            tmp[key] = []
             for x in value:
                 if not isinstance(x, int) and not isinstance(x, str) and not isinstance(x,
                                                                                         float):  # WARNING: possible bug
