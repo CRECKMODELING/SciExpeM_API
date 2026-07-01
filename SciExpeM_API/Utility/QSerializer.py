@@ -31,6 +31,27 @@ class QSerializer(object):
                          datetime.fromtimestamp(qtuple[1][1]))
         return qtuple
 
+    @staticmethod
+    def _resolve_value(value):
+        """
+        Replace non JSON-serializable model objects (client-side SciExpeM_API
+        models or Django model instances) with their primary key, so a query
+        like ``fuels_object=<Species>`` becomes ``fuels_object=<id>``.
+        Handles scalars as well as lists/tuples of objects.
+        """
+        def resolve_single(v):
+            if isinstance(v, (str, bytes, bool, int, float, type(None))):
+                return v
+            # Any object exposing an 'id' (client model) or 'pk' (Django model)
+            obj_id = getattr(v, 'id', None)
+            if obj_id is None:
+                obj_id = getattr(v, 'pk', None)
+            return obj_id if obj_id is not None else v
+
+        if isinstance(value, (list, tuple)):
+            return type(value)(resolve_single(v) for v in value)
+        return resolve_single(value)
+
     def serialize(self, q):
         """
         Serialize a Q object.
@@ -40,7 +61,9 @@ class QSerializer(object):
             if isinstance(child, Q):
                 children.append(self.serialize(child))
             else:
-                children.append(child)
+                # child is a (lookup, value) tuple; resolve model objects to ids
+                key, value = child
+                children.append((key, self._resolve_value(value)))
         serialized = q.__dict__
         serialized['children'] = children
         return serialized
