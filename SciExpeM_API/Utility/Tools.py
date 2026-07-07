@@ -1,6 +1,6 @@
 import SciExpeM_API.Utility.settings as settings
 import SciExpeM_API.Utility.RequestAPI as rAPI
-from SciExpeM_API.Models import *
+import SciExpeM_API.Models as Models
 import json
 
 
@@ -14,7 +14,7 @@ def getProperty(model_name, element_id, property_name):
 
 
 def optimize(database, model_name, text, refresh=False):
-    model = eval(model_name)
+    model = getattr(Models, model_name)
     refresh_models = ['CurveMatchingResult',
                       'Execution',
                       'Experiment',
@@ -22,8 +22,6 @@ def optimize(database, model_name, text, refresh=False):
                       'Species',
                       'ExperimentBackUp',
                       ]
-    if model in refresh_models:
-        text['refresh'] = refresh
     data_structure = json.loads(text)
     if data_structure == [None]:
         return None
@@ -62,8 +60,9 @@ def serialize(obj, exclude):
                     tmp[key] = tmp.get(key, []) + [x]
             # tmp[key] = [x.serialize() if not isinstance(x, int) or not isinstance(x, str) else x for x in value]
         else:
-            if isinstance(value, FilePaper) or (isinstance(value, DataColumn) and key == 'uncertainty_reference') or (
-            isinstance(value, Species)):
+            if isinstance(value, Models.FilePaper) or (
+                isinstance(value, Models.DataColumn) and key == 'uncertainty_reference'
+            ) or isinstance(value, Models.Species):
                 tmp[key] = value.serialize()
             else:
                 tmp[key] = value
