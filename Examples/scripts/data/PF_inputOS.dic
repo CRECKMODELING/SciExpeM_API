@@ -1,0 +1,109 @@
+//-----------------------------------------------------------------//
+//     ____                    ______ __  __  ____  _  ________    //
+//    / __ \                  /  ___ |  \/  |/ __ \| |/ /  ____|   //
+//   | |  | |_ __   ___ _ __ |  (___ | \  / | |  | | ' /| |__      //
+//   | |  | | '_ \ / _ \ '_ \ \___  \| |\/| | |  | |  < |  __|     //
+//   | |__| | |_) |  __/ | | |____)  | |  | | |__| | . \| |____    //
+//    \____/| .__/ \___|_| |_|______/|_|  |_|\____/|_|\_\______|   //
+//         | |                                                     //
+//         |_|                                                     //
+//                                                                 //
+//                http://www.opensmoke.polimi.it/                  //
+//             http://creckmodeling.chem.polimi.it/                //
+//-----------------------------------------------------------------//
+Dictionary PremixedLaminarFlame1D
+{
+	@KineticsFolder /home/chimica2/lpratali/FLAMES_DB/AAA_MECHS/POLI_2406_NOC7H5C3H3;
+	@Type			BurnerStabilized;
+	@InletStream 	inlet-stream;
+	@OutletStream	outlet-stream;
+	@InletVelocity	54.7 cm/s;
+	@Grid			grid;
+	@Output Output_POLI_2406_NOC7H5C3H3;
+	@Backup			Output_Backup/Output.xml;
+	@UseDaeSolver	true;
+	//@DaeParameters				dae-parameters;
+	@NlsParameters				nls-parameters;
+	@FalseTransientParameters	falsetransient-parameters;
+	@FixedTemperatureProfile T-Profile;
+}
+Dictionary inlet-stream
+{
+	@MoleFractions  CYC5H8  0.16667 O2 0.58333  AR 0.25 ; 
+	@Temperature	340 K;
+	@Pressure		4.9346e-2 atm ; 
+}
+Dictionary outlet-stream
+{
+	@MoleFractions			H2O  0.16  AR   0.84;
+	@Temperature	1800 K;
+	@Pressure		4.9346e-2 atm;
+}
+Dictionary grid
+{
+	@Length					3 cm;
+	@InitialPoints			12;
+	@Type					database;
+	@MaxPoints		200;
+	@MaxAdaptivePoints		5;
+	@GradientCoefficient	0.04;
+	@CurvatureCoefficient	0.5;
+}
+Dictionary dae-parameters
+{
+	@DaeSolver				OpenSMOKE++;
+	@Jacobian				Band;
+	@RelativeTolerance		1e-6;
+	@AbsoluteTolerance		1e-10;
+	@MaximumNumberOfSteps	100000;
+	@MaximumStep			1e3;
+	@MinimumStep			1e-9;
+	@InitialStep			1e-9;
+	@MaximumOrder			5;
+	@MeanResidualThreshold		1e-5;
+	@VerbosityLevel				1;
+}
+Dictionary nls-parameters
+{
+	@NlsSolver					OpenSMOKE++;
+	@Jacobian					TridiagonalBlock;
+	@FunctionTolerance			1e-7;
+	@StepTolerance				3e-11;
+	@RelativeError				1.5e-8;
+	@MaximumNumberOfIterations	200;
+	@MaximumSetupCalls			10;
+	@MaximumSubSetupCalls		5;
+	@Scaling					1;
+	@VerbosityLevel				0;
+	@Strategy					NewtonGlobalization;
+}
+Dictionary falsetransient-parameters
+{
+	@FalseTransientSolver		OpenSMOKE++;
+	@Jacobian					TridiagonalBlock;
+	@FunctionTolerance			1e-8;
+	@StepTolerance				3e-11;
+	@RelativeError				1.5e-8;
+	@MaximumNumberOfIterations	200;
+	@MaximumSetupCalls			10;
+	@MaximumSubSetupCalls		5;
+	@Scaling					1;
+	@VerbosityLevel				0;
+	@Strategy					NewtonGlobalization;
+	@StepsReusingJacobian		20;
+	@StepsBeforeIncreasing		25;
+	@MinimumNumberSteps			80;
+	@InitialStep				1e-6;
+	@IncrementFactor			10.;
+	@MaximumStep				0.01;
+	@DecrementFactor			2.;
+	@MinimumStep				1e-9;
+}
+Dictionary T-Profile
+{	
+	@XVariable length;
+	@YVariable temperature;
+	@XUnits cm ;
+	@YUnits K ;
+	@Profile 0.0  340.  0.1  878.  0.2     1443.   0.4     2053.5  0.6     2167.6  0.8     2135.5  1.0     2095.  3.0     1800 ;
+} 

@@ -1,0 +1,52 @@
+//-----------------------------------------------------------------//
+//     ____                    ______ __  __  ____  _  ________    //
+//    / __ \                  /  ___ |  \/  |/ __ \| |/ /  ____|   //
+//   | |  | |_ __   ___ _ __ |  (___ | \  / | |  | | ' /| |__      //
+//   | |  | | '_ \ / _ \ '_ \ \___  \| |\/| | |  | |  < |  __|     //
+//   | |__| | |_) |  __/ | | |____)  | |  | | |__| | . \| |____    //
+//    \____/| .__/ \___|_| |_|______/|_|  |_|\____/|_|\_\______|   //
+//         | |                                                     //
+//         |_|                                                     //
+//                                                                 //
+//                http://www.opensmoke.polimi.it/                  //
+//             http://creckmodeling.chem.polimi.it/                //
+//-----------------------------------------------------------------//
+Dictionary PlugFlowReactor
+{
+@KineticsFolder	/Users/lpratalimaffei/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Luna/Universita/RICERCA/OPENSMOKE/MECCANISMI/000_CRECK/CRECK_MECH/POLI_2601_C14matsugi ;  
+		@Type					Isothermal;
+		@InletStatus          	inlet-mixture;
+		@Length					210 mm;
+        @Diameter               6.8 mm;
+		@ConstantPressure		true;
+		@MoleFlowRate			1E-3 mol/s;
+        //@TemperatureProfile     T-Profile;
+        @Options                Output;
+        @OdeParameters			ODE-Tolerance;                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+        @ParametricAnalysis     parametric-analysis;
+}
+Dictionary inlet-mixture
+{
+		@Temperature   	603.  	K ; 
+		@Pressure      	4000 Pa;
+		@Moles			C7H8 50  AR 950 ;
+}
+Dictionary Output
+{
+    @OutputFolder     POLI_2601_C14matsugi;
+  //  @OutputSpecies C7H8        	C7H7        	C7H6        	C7H5        	C5H5        	C5H6        	C6H6        	CYC6H4     	C6H2        	C5H6        	C5H3        	C4H6        	C4H4        	C4H2        	C3H4-A      	C3H4-P      	C3H3        	C2H4        	C2H2        	CH4         	CH3         	H2          	AR          	C6H5C2H     	C6H5C2H3    	C6H5C2H5    	INDENYL     	INDENE      	C10H8       	C12H8       	BIPHENYL    	FLUORENE    	C6H5CH2C6H5 	C14H10      	C6H5C2H4C6H5	C16H10      	CYC5H4;
+}
+ Dictionary parametric-analysis                                                                                                                                                                                                                          
+ {	                                                                                                                                                                                                                                 
+ @Type 					temperature-pressure;              
+ @ListOfProfiles       PFR_profiles/1100.csv  PFR_profiles/1150.csv  PFR_profiles/1200.csv  PFR_profiles/1250.csv  PFR_profiles/1300.csv  PFR_profiles/1350.csv  PFR_profiles/1400.csv  PFR_profiles/1450.csv  PFR_profiles/1500.csv  PFR_profiles/1550.csv  PFR_profiles/1600.csv  PFR_profiles/1650.csv  PFR_profiles/1700.csv  PFR_profiles/1750.csv;   				                                                                                                                                                                                                                                                                                                                                                                                                                     
+ } 
+ Dictionary ODE-Tolerance                                                                                                                                                                                                                          
+ {                                                                                                                                                                                                                          
+ @RelativeTolerance 	1e-10;                                                                                                                                                                                                                          
+ @AbsoluteTolerance 	1e-13;                                                                                                                                                                                                                          
+ ////@MinimumStep 		1e-9;                                                                                                                                                                                                                          
+ //@MaximumStep 		1e5;                                                                                                                                                                                                                          
+ @MaximumNumberOfSteps 100000;                                                                                                                                                                                                                          
+ }
+
