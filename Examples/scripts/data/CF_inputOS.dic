@@ -1,0 +1,76 @@
+//-----------------------------------------------------------------//
+//     ____                    ______ __  __  ____  _  ________    //
+//    / __ \                  /  ___ |  \/  |/ __ \| |/ /  ____|   //
+//   | |  | |_ __   ___ _ __ |  (___ | \  / | |  | | ' /| |__      //
+//   | |  | | '_ \ / _ \ '_ \ \___  \| |\/| | |  | |  < |  __|     //
+//   | |__| | |_) |  __/ | | |____)  | |  | | |__| | . \| |____    //
+//    \____/| .__/ \___|_| |_|______/|_|  |_|\____/|_|\_\______|   //
+//         | |                                                     //
+//         |_|                                                     //
+//                                                                 //
+//                http://www.opensmoke.polimi.it/                  //
+//             http://creckmodeling.chem.polimi.it/                //
+//-----------------------------------------------------------------//
+Dictionary CounterFlowFlame1D
+{
+	@Type					CounterFlowDiffusion;
+	@KineticsFolder /home/chimica2/lpratali/FLAMES_DB/AAA_MECHS/POLI_2401-29-HT ;
+	@FuelStream 			fuel-stream;
+	@OxidizerStream			oxidizer-stream;
+       @Backup                         POLI_2401-29-HT_forbackup/Output.xml;
+	@FuelVelocity			22.12 cm/s;
+	@OxidizerVelocity		22.12 cm/s;
+	@Grid					grid;
+	@Output POLI_2401-29-HT ;
+	@EigenValueStartingGuess	-100 kg/m3/s2;
+	@PeakMixture				peak-mixture;
+	@InitialProfiles			linear;
+	@PeakPosition				0.6 cm;
+	@MixingZoneWidth			0.2 cm; //larghezza campana ; dovrebbe accelerare
+	@UseDaeSolver				true; // almeno usa solver dae
+	@UseNlsSolver				false;
+        @InitialTemperatureProfile T-Profile;
+}
+
+
+Dictionary fuel-stream
+{
+	@MoleFractions		C3H4-A 0.069 AR 0.931 ;			
+	@Temperature     	300.1 K;
+	@Pressure		0.933 atm;
+}
+
+Dictionary oxidizer-stream
+{
+	@MoleFractions	O2 0.2  AR 0.8;
+	@Temperature	300.1 K;
+	@Pressure	0.933 atm;
+}
+
+Dictionary peak-mixture
+{
+	@MoleFractions	CO2 0.4 H2O 0.6 ;					
+	@Temperature	2000 K;
+	@Pressure	0.933 atm;
+}
+
+Dictionary grid
+{
+	@Length				1.2 cm;
+	@InitialPoints	    60; //	100;
+	@Type				equispaced;	
+	@MaxPoints		 200; // massimo numero di punti per refinement della griglia
+	@MaxAdaptivePoints   60 ; // ogni volta che raffini la griglia aggiungi questi puntu
+	@GradientCoefficient      0.045;
+	@CurvatureCoefficient     0.4;
+}
+
+Dictionary T-Profile
+{
+	@XVariable length;
+	@YVariable temperature;	
+	@XUnits cm;
+	@YUnits K;
+	@Profile 0.000	300.1 0.2	300.1 0.5	2000. 0.6	2000. 1.0	300.1 1.20	300.1 ;
+}
+
