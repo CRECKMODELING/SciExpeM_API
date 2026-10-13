@@ -272,7 +272,7 @@ def build_profile_data_columns(
     label_dct,
     source_type='reported',
 ):
-    import extract_data
+    from SciExpeM_API.Utility import extract_data
 
     data_columns = []
     profile_columns = []

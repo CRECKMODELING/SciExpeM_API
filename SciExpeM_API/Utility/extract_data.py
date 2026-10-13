@@ -71,9 +71,11 @@ def _active_line(line):
 
 def _os_keyword_values(line, keyword):
     active_line = _active_line(line)
-    if keyword not in active_line:
+    # keyword must not be a prefix of a longer one (@ListOfValues vs @ListOfValues2)
+    match = re.search(re.escape(keyword) + r'(?![A-Za-z0-9_])', active_line)
+    if match is None:
         return None
-    return active_line.split(keyword, 1)[1].split(';', 1)[0].strip().split()
+    return active_line[match.end():].split(';', 1)[0].strip().split()
 
 def _parametric_commonprop_name(parametric_type):
     return 'parametric {}'.format(parametric_type)
@@ -83,6 +85,15 @@ def _store_parametric_analysis(extrainfo, parametric_info):
     if parametric_type is None:
         return
     commonprop_name = _parametric_commonprop_name(parametric_type)
+    if parametric_type == 'residence-time-temperature' and 'list_values2' in parametric_info:
+        # @ListOfValues = residence times, @ListOfValues2 = temperatures:
+        # treat it as a plain temperature sweep
+        values, unit = parametric_info['list_values2']
+        extrainfo['commonprop'][_parametric_commonprop_name('temperature')] = [str(min(values)), str(max(values)), unit]
+        if 'list_values' in parametric_info:
+            values, unit = parametric_info['list_values']
+            extrainfo['commonprop'][_parametric_commonprop_name('residence-time')] = [str(min(values)), str(max(values)), unit]
+        return
     if 'list_values' in parametric_info:
         values, unit = parametric_info['list_values']
         extrainfo['commonprop'][commonprop_name] = [str(min(values)), str(max(values)), unit]
@@ -534,6 +545,12 @@ def process_osinput(path, osinputname, profiles = False, flameinfo = False):
                     parametric_info['list_values'] = [
                         np.array(list_values[:-1], dtype=float),
                         list_values[-1],
+                    ]
+                list_values2 = _os_keyword_values(line, '@ListOfValues2')
+                if list_values2 is not None and len(list_values2) >= 2:
+                    parametric_info['list_values2'] = [
+                        np.array(list_values2[:-1], dtype=float),
+                        list_values2[-1],
                     ]
 
             if flameinfo == True:
